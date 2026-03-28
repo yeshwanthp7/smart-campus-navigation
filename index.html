@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Campus Navigation</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #f5f7fb;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 15px 30px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* SEARCH */
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px;
+      gap: 10px;
+    }
+
+    input {
+      width: 300px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* MAIN */
+    .main {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 280px;
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 15px;
+      height: 60vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    .icon {
+      width: 60px;
+      height: 60px;
+      background: #e5e7eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    .sidebar li {
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .sidebar li:hover {
+      background: #e5e7eb;
+    }
+
+    /* MAP */
+    .map-container {
+      flex: 1;
+    }
+
+    .map {
+      width: 100%;
+      height: 60vh;
+      background: linear-gradient(to right, #e0f2fe, #dcfce7);
+      border-radius: 15px;
+      position: relative;
+    }
+
+    /* USER DOT */
+    #userDot {
+      width: 14px;
+      height: 14px;
+      background: #2563eb;
+      border-radius: 50%;
+      position: absolute;
+      top: 65%;
+      left: 10%;
+      z-index: 10;
+    }
+
+    #userDot::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: rgba(37, 99, 235, 0.3);
+      border-radius: 50%;
+      top: -8px;
+      left: -8px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* POINTS (RESPONSIVE %) */
+    .point {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .point img {
+      width: 20px;
+      height: 20px;
+      filter: brightness(0) invert(1);
+    }
+
+    .red { top: 60%; left: 20%; background: red; }
+    .blue { top: 40%; left: 30%; background: blue; }
+    .green { top: 70%; left: 55%; background: green; }
+    .orange { top: 30%; left: 70%; background: orange; }
+    .purple { top: 20%; left: 45%; background: purple; }
+
+    /* ROUTE */
+    svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    line {
+      stroke: red;
+      stroke-width: 4;
+      stroke-dasharray: 10;
+      animation: move 1s linear infinite;
+    }
+    .label {
+  position: absolute;
+  top: 45px;              /* below box */
+  font-size: 12px;
+  color: black;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+
+    @keyframes move {
+      to {
+        stroke-dashoffset: -20;
+      }
+    }
+
+    #result {
+      text-align: center;
+      font-size: 18px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    📍 <h1>Smart Campus Navigation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Search location or faculty">
+    <button onclick="showRoute()">Search</button>
+  </div>
+
+  <div id="result"></div>
+
+  <div class="main">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="icon">📍</div>
+      <h2>Find Your Destination</h2>
+
+      <ul>
+        <li onclick="quickSearch('library')">Library</li>
+        <li onclick="quickSearch('student center')">Student Center</li>
+        <li onclick="quickSearch('engineering building')">Engineering Building</li>
+        <li onclick="quickSearch('science hall')">Science Hall</li>
+        <li onclick="quickSearch('admin building')">Admin Building</li>
+      </ul>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-container">
+      <div class="map">
+
+        <div id="userDot"></div>
+
+        <div class="point red" > <img src="map.png">
+            <span class="label">Library</span>
+        </div>
+        <div class="point blue"> <img src="map.png">
+            <span class="label">Student Center</span>
+        </div>
+        <div class="point green"> <img src="map.png">
+            <span class="label">Engineering Building</span>
+        </div>
+        <div class="point orange"> <img src="map.png">
+            <span class="label">Science Hall</span>
+        </div>
+        <div class="point purple"> <img src="map.png">
+            <span class="label">Admin Building</span>
+        </div>
+
+        <svg id="routeLine"></svg>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const data = {
+      "library": { location: "📚 Library → Block A", coords: [10, 65, 20, 60] },
+      "student center": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
+      "engineering building": { location: "🏢 Engineering Building", coords: [10, 65, 55, 70] },
+      "science hall": { location: "🔬 Science Hall", coords: [10, 65, 70, 30] },
+      "admin building": { location: "🏛 Admin Building", coords: [10, 65, 45, 20] }
+    };
+
+    function showRoute() {
+      let input = document.getElementById("search").value.toLowerCase().trim();
+      let result = data[input];
+
+      if (result) {
+        document.getElementById("result").innerText = result.location;
+
+        let svg = document.getElementById("routeLine");
+        svg.innerHTML = "";
+
+        let [x1, y1, x2, y2] = result.coords;
+
+        let dot = document.getElementById("userDot");
+        dot.style.left = x1 + "%";
+        dot.style.top = y1 + "%";
+
+        svg.innerHTML = `<line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" />`;
+      }
+    }
+
+    function quickSearch(place) {
+      document.getElementById("search").value = place;
+      showRoute();
+    }
+  </script>
+
+</body>
+</html>
