@@ -24,7 +24,6 @@ A smart web-based navigation system that allows users to search locations and vi
 - 2- A M ismail
 
 ## 🔗 Live Demo
-(Add link here)
+https://yeshwanthp7.github.io/smart-campus-navigation/
 
-## 🎥 Demo Video
-(Add video link here)
+
