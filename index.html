@@ -10,7 +10,6 @@
       background: #f5f7fb;
     }
 
-    /* HEADER */
     .header {
       display: flex;
       align-items: center;
@@ -19,7 +18,6 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    /* SEARCH */
     .search-container {
       display: flex;
       justify-content: center;
@@ -43,14 +41,12 @@
       cursor: pointer;
     }
 
-    /* MAIN */
     .main {
       display: flex;
       padding: 20px;
       gap: 20px;
     }
 
-    /* SIDEBAR */
     .sidebar {
       width: 280px;
       background: #f9fafb;
@@ -90,7 +86,36 @@
       background: #e5e7eb;
     }
 
-    /* MAP */
+    /* TEACHER SECTION */
+    .teacher-section {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .teacher-section input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .teacher-section button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      background: #10b981;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #teacherResult {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
     .map-container {
       flex: 1;
     }
@@ -103,7 +128,6 @@
       position: relative;
     }
 
-    /* USER DOT */
     #userDot {
       width: 14px;
       height: 14px;
@@ -132,7 +156,6 @@
       100% { transform: scale(1.8); opacity: 0; }
     }
 
-    /* POINTS (RESPONSIVE %) */
     .point {
       width: 40px;
       height: 40px;
@@ -156,7 +179,6 @@
     .orange { top: 30%; left: 70%; background: orange; }
     .purple { top: 20%; left: 45%; background: purple; }
 
-    /* ROUTE */
     svg {
       position: absolute;
       width: 100%;
@@ -169,22 +191,24 @@
       stroke-dasharray: 10;
       animation: move 1s linear infinite;
     }
-    .label {
-  position: absolute;
-  top: 45px;              /* below box */
-  font-size: 12px;
-  color: black;
-  background: white;
-  padding: 2px 6px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  white-space: nowrap;
-}
 
     @keyframes move {
       to {
         stroke-dashoffset: -20;
       }
+    }
+
+    .label {
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      background: white;
+      padding: 2px 6px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      white-space: nowrap;
     }
 
     #result {
@@ -222,6 +246,15 @@
         <li onclick="quickSearch('science hall')">Science Hall</li>
         <li onclick="quickSearch('admin building')">Admin Building</li>
       </ul>
+
+      <!-- TEACHER SEARCH -->
+      <div class="teacher-section">
+        <h3>👨‍🏫 Faculty Search</h3>
+        <input type="text" id="teacherInput" placeholder="Enter faculty name">
+        <button onclick="findTeacher()">Find</button>
+        <div id="teacherResult"></div>
+      </div>
+
     </div>
 
     <!-- MAP -->
@@ -230,21 +263,11 @@
 
         <div id="userDot"></div>
 
-        <div class="point red" > <img src="map.png">
-            <span class="label">Library</span>
-        </div>
-        <div class="point blue"> <img src="map.png">
-            <span class="label">Student Center</span>
-        </div>
-        <div class="point green"> <img src="map.png">
-            <span class="label">Engineering Building</span>
-        </div>
-        <div class="point orange"> <img src="map.png">
-            <span class="label">Science Hall</span>
-        </div>
-        <div class="point purple"> <img src="map.png">
-            <span class="label">Admin Building</span>
-        </div>
+        <div class="point red"><img src="map.png"><span class="label">Library</span></div>
+        <div class="point blue"><img src="map.png"><span class="label">Student Center</span></div>
+        <div class="point green"><img src="map.png"><span class="label">Engineering</span></div>
+        <div class="point orange"><img src="map.png"><span class="label">Science Hall</span></div>
+        <div class="point purple"><img src="map.png"><span class="label">Admin</span></div>
 
         <svg id="routeLine"></svg>
 
@@ -260,6 +283,12 @@
       "engineering building": { location: "🏢 Engineering Building", coords: [10, 65, 55, 70] },
       "science hall": { location: "🔬 Science Hall", coords: [10, 65, 70, 30] },
       "admin building": { location: "🏛 Admin Building", coords: [10, 65, 45, 20] }
+    };
+
+    const teachers = {
+      "rajkumar": { name: "Raj Kumar", cabin: "Block A - Room 101", dept: "CSE" },
+      "john": { name: "John Sir", cabin: "Block B - Room 202", dept: "ECE" },
+      "priya": { name: "Priya Ma'am", cabin: "Block C - Room 303", dept: "MBA" }
     };
 
     function showRoute() {
@@ -285,6 +314,20 @@
     function quickSearch(place) {
       document.getElementById("search").value = place;
       showRoute();
+    }
+
+    function findTeacher() {
+      let input = document.getElementById("teacherInput").value.toLowerCase().trim();
+      let result = teachers[input];
+
+      if (result) {
+        document.getElementById("teacherResult").innerHTML =
+          `<b>Name:</b> ${result.name}<br>
+           <b>Cabin:</b> ${result.cabin}<br>
+           <b>Department:</b> ${result.dept}`;
+      } else {
+        document.getElementById("teacherResult").innerHTML = "❌ Faculty not found";
+      }
     }
   </script>
 
