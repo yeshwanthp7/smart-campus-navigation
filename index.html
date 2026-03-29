@@ -57,19 +57,6 @@
       text-align: center;
     }
 
-    .icon {
-      width: 60px;
-      height: 60px;
-      background: #e5e7eb;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: auto;
-      font-size: 24px;
-      margin-bottom: 15px;
-    }
-
     .sidebar ul {
       list-style: none;
       padding: 0;
@@ -86,7 +73,6 @@
       background: #e5e7eb;
     }
 
-    /* TEACHER */
     .teacher-section {
       margin-top: 20px;
       text-align: left;
@@ -116,7 +102,6 @@
       font-size: 14px;
     }
 
-    /* MAP */
     .map-container {
       flex: 1;
     }
@@ -139,7 +124,7 @@
       top: 65%;
       left: 10%;
       z-index: 10;
-      transition: all 0.8s ease; /* 🔥 smooth movement */
+      transition: all 0.8s ease;
     }
 
     #userDot::after {
@@ -169,6 +154,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
     }
 
     .point img {
@@ -192,8 +178,26 @@
       background: white;
       padding: 2px 6px;
       border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      white-space: nowrap;
+    }
+
+    /* POPUP IMAGE */
+    .popup {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      background: white;
+      padding: 5px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .popup img {
+      width: 120px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
     }
 
     /* ROUTE */
@@ -211,9 +215,7 @@
     }
 
     @keyframes move {
-      to {
-        stroke-dashoffset: -20;
-      }
+      to { stroke-dashoffset: -20; }
     }
 
     #result {
@@ -241,25 +243,22 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="icon">📍</div>
       <h2>Find Your Destination</h2>
 
       <ul>
         <li onclick="quickSearch('library')">Library</li>
         <li onclick="quickSearch('student center')">Student Center</li>
-        <li onclick="quickSearch('engineering building')">Engineering Building</li>
+        <li onclick="quickSearch('engineering building')">Engineering</li>
         <li onclick="quickSearch('science hall')">Science Hall</li>
-        <li onclick="quickSearch('admin building')">Admin Building</li>
+        <li onclick="quickSearch('admin building')">Admin</li>
       </ul>
 
-      <!-- FACULTY -->
       <div class="teacher-section">
         <h3>👨‍🏫 Faculty Search</h3>
-        <input type="text" id="teacherInput" placeholder="Enter faculty name">
+        <input type="text" id="teacherInput">
         <button onclick="findTeacher()">Find</button>
         <div id="teacherResult"></div>
       </div>
-
     </div>
 
     <!-- MAP -->
@@ -268,11 +267,36 @@
 
         <div id="userDot"></div>
 
-        <div class="point red"><img src="map.png"><span class="label">Library</span></div>
-        <div class="point blue"><img src="map.png"><span class="label">Student Center</span></div>
-        <div class="point green"><img src="map.png"><span class="label">Engineering</span></div>
-        <div class="point orange"><img src="map.png"><span class="label">Science Hall</span></div>
-        <div class="point purple"><img src="map.png"><span class="label">Admin</span></div>
+        <!-- POINTS WITH IMAGE POPUP -->
+        <div class="point red" onclick="showPopup(this)">
+          <img src="map.png">
+          <span class="label">Library</span>
+          <div class="popup"><img src="library.jpg"></div>
+        </div>
+
+        <div class="point blue" onclick="showPopup(this)">
+          <img src="map.png">
+          <span class="label">Student</span>
+          <div class="popup"><img src="student.jpg"></div>
+        </div>
+
+        <div class="point green" onclick="showPopup(this)">
+          <img src="map.png">
+          <span class="label">Engineering</span>
+          <div class="popup"><img src="engineering.jpg"></div>
+        </div>
+
+        <div class="point orange" onclick="showPopup(this)">
+          <img src="map.png">
+          <span class="label">Science</span>
+          <div class="popup"><img src="science.jpg"></div>
+        </div>
+
+        <div class="point purple" onclick="showPopup(this)">
+          <img src="map.png">
+          <span class="label">Admin</span>
+          <div class="popup"><img src="admin.jpg"></div>
+        </div>
 
         <svg id="routeLine"></svg>
 
@@ -282,18 +306,18 @@
   </div>
 
   <script>
+    let currentPosition = [10, 65];
+
     const data = {
-      "library": { location: "📚 Library → Block A", coords: [10, 65, 20, 60] },
+      "library": { location: "📚 Library", coords: [10, 65, 20, 60] },
       "student center": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
-      "engineering building": { location: "🏢 Engineering Building", coords: [10, 65, 55, 70] },
-      "science hall": { location: "🔬 Science Hall", coords: [10, 65, 70, 30] },
-      "admin building": { location: "🏛 Admin Building", coords: [10, 65, 45, 20] }
+      "engineering building": { location: "🏢 Engineering", coords: [10, 65, 55, 70] },
+      "science hall": { location: "🔬 Science", coords: [10, 65, 70, 30] },
+      "admin building": { location: "🏛 Admin", coords: [10, 65, 45, 20] }
     };
 
     const teachers = {
-      "ismail": { name: "A.M Ismail", cabin: "Block A - Room 101", dept: "CSE" },
-      "john": { name: "John Sir", cabin: "Block B - Room 202", dept: "ECE" },
-      "priya": { name: "Priya Ma'am", cabin: "Block C - Room 303", dept: "MBA" }
+      "ismail": { name: "A.M Ismail", cabin: "Block A - Room 101", dept: "CSE" }
     };
 
     function showRoute() {
@@ -306,15 +330,15 @@
         let svg = document.getElementById("routeLine");
         svg.innerHTML = "";
 
-        let [x1, y1, x2, y2] = result.coords;
+        let [x2, y2] = result.coords.slice(2);
+        let [x1, y1] = currentPosition;
 
-        let dot = document.getElementById("userDot");
-
-        // 🔥 MOVE DOT TO DESTINATION
-        dot.style.left = x2 + "%";
-        dot.style.top = y2 + "%";
+        document.getElementById("userDot").style.left = x2 + "%";
+        document.getElementById("userDot").style.top = y2 + "%";
 
         svg.innerHTML = `<line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" />`;
+
+        currentPosition = [x2, y2];
       }
     }
 
@@ -329,13 +353,21 @@
 
       if (result) {
         document.getElementById("teacherResult").innerHTML =
-          `<b>Name:</b> ${result.name}<br>
-           <b>Cabin:</b> ${result.cabin}<br>
-           <b>Department:</b> ${result.dept}`;
-      } else {
-        document.getElementById("teacherResult").innerHTML = "❌ Faculty not found";
+          `${result.name} <br> ${result.cabin}`;
       }
     }
+
+    function showPopup(el) {
+      document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+      el.querySelector(".popup").style.display = "block";
+    }
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest(".point")) {
+        document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+      }
+    });
+
   </script>
 
 </body>
