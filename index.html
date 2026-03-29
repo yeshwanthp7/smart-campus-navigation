@@ -246,6 +246,7 @@
       <h2>Find Your Destination</h2>
 
       <ul>
+        <li onclick="quickSearch('gate')">Gate</li>
         <li onclick="quickSearch('library')">Library</li>
         <li onclick="quickSearch('student center')">Student Center</li>
         <li onclick="quickSearch('engineering building')">Engineering</li>
@@ -267,7 +268,14 @@
 
         <div id="userDot"></div>
 
-        <!-- POINTS WITH IMAGE POPUP -->
+        <!-- GATE -->
+        <div class="point" style="top:65%; left:10%; background:black;" onclick="showPopup(this)">
+          <img src="map.png">
+          <span class="label">Gate</span>
+          <div class="popup"><img src="gate.jpg"></div>
+        </div>
+
+        <!-- OTHER POINTS -->
         <div class="point red" onclick="showPopup(this)">
           <img src="map.png">
           <span class="label">Library</span>
@@ -306,9 +314,11 @@
   </div>
 
   <script>
-    let currentPosition = [10, 65];
+    let currentPosition = [10, 65]; // start at gate
 
     const data = {
+      "gate": { location: "🚪 Gate", coords: [10, 65, 10, 65] },
+
       "library": { location: "📚 Library", coords: [10, 65, 20, 60] },
       "student center": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
       "engineering building": { location: "🏢 Engineering", coords: [10, 65, 55, 70] },
@@ -317,7 +327,7 @@
     };
 
     const teachers = {
-      "ismail": { name: "A.M Ismail", cabin: "Block A - Room 101", dept: "CSE" }
+      "ismail": { name: "A.M Ismail", cabin: "Block A - Room 101" }
     };
 
     function showRoute() {
@@ -367,7 +377,6 @@
         document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
       }
     });
-
   </script>
 
 </body>
