@@ -314,70 +314,129 @@
   </div>
 
   <script>
-    let currentPosition = [10, 65]; // start at gate
+  let currentPosition = [10, 65]; // start at gate
 
-    const data = {
-      "gate": { location: "🚪 Gate", coords: [10, 65, 10, 65] },
+  // 🔥 LOCATION DATA (SIMPLIFIED KEYS)
+  const data = {
+    "gate": { location: "🚪 Gate", coords: [10, 65, 10, 65] },
 
-      "library": { location: "📚 Library", coords: [10, 65, 20, 60] },
-      "student center": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
-      "engineering building": { location: "🏢 Engineering", coords: [10, 65, 55, 70] },
-      "science hall": { location: "🔬 Science", coords: [10, 65, 70, 30] },
-      "admin building": { location: "🏛 Admin", coords: [10, 65, 45, 20] }
-    };
+    "library": { location: "📚 Library", coords: [10, 65, 20, 60] },
+    "student": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
+    "engineering": { location: "🏢 Engineering Block", coords: [10, 65, 55, 70] },
+    "science": { location: "🔬 Science Block", coords: [10, 65, 70, 30] },
+    "admin": { location: "🏛 Admin Block", coords: [10, 65, 45, 20] }
+  };
 
-    const teachers = {
-      "ismail": { name: "A.M Ismail", cabin: "Block A - Room 101" }
-    };
+  // 🔥 TEACHER DATA (CONNECTED TO LOCATION)
+  const teachers = {
+    "ismail": {
+      name: "A.M Ismail",
+      cabin: "Block A - Room 101",
+      location: "engineering"
+    },
+    "john": {
+      name: "John Sir",
+      cabin: "Block B - Room 202",
+      location: "science"
+    }
+  };
 
-    function showRoute() {
-      let input = document.getElementById("search").value.toLowerCase().trim();
-      let result = data[input];
+  // 🔥 MAIN FUNCTION
+  function showRoute() {
+    let input = document.getElementById("search").value.toLowerCase().trim();
+
+    let result = null;
+
+    // ✅ CHECK TEACHER FIRST
+    if (teachers[input]) {
+      let teacher = teachers[input];
+
+      document.getElementById("result").innerHTML =
+        `👨‍🏫 ${teacher.name}<br>📍 ${teacher.cabin}`;
+
+      result = data[teacher.location]; // route to building
+    }
+
+    // ✅ FLEXIBLE LOCATION SEARCH
+    else {
+      for (let key in data) {
+        if (key.includes(input)) {
+          result = data[key];
+          break;
+        }
+      }
 
       if (result) {
         document.getElementById("result").innerText = result.location;
-
-        let svg = document.getElementById("routeLine");
-        svg.innerHTML = "";
-
-        let [x2, y2] = result.coords.slice(2);
-        let [x1, y1] = currentPosition;
-
-        document.getElementById("userDot").style.left = x2 + "%";
-        document.getElementById("userDot").style.top = y2 + "%";
-
-        svg.innerHTML = `<line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" />`;
-
-        currentPosition = [x2, y2];
       }
     }
 
-    function quickSearch(place) {
-      document.getElementById("search").value = place;
-      showRoute();
+    // ✅ ROUTE DRAWING
+    if (result) {
+      let svg = document.getElementById("routeLine");
+      svg.innerHTML = "";
+
+      let [x2, y2] = result.coords.slice(2);
+      let [x1, y1] = currentPosition;
+
+      // move user dot
+      let dot = document.getElementById("userDot");
+      dot.style.left = x2 + "%";
+      dot.style.top = y2 + "%";
+
+      // draw route
+      svg.innerHTML = `
+        <line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" />
+      `;
+
+      // update position
+      currentPosition = [x2, y2];
     }
 
-    function findTeacher() {
-      let input = document.getElementById("teacherInput").value.toLowerCase().trim();
-      let result = teachers[input];
-
-      if (result) {
-        document.getElementById("teacherResult").innerHTML =
-          `${result.name} <br> ${result.cabin}`;
-      }
+    else {
+      document.getElementById("result").innerText = "❌ Location not found";
     }
+  }
 
-    function showPopup(el) {
+  // 🔥 QUICK CLICK FROM SIDEBAR
+  function quickSearch(place) {
+    document.getElementById("search").value = place;
+    showRoute();
+  }
+
+  // 🔥 FACULTY SEARCH PANEL
+  function findTeacher() {
+  let input = document.getElementById("teacherInput").value.toLowerCase().trim();
+  let teacher = teachers[input];
+
+  if (teacher) {
+    // show details
+    document.getElementById("teacherResult").innerHTML =
+      `<b>${teacher.name}</b><br>${teacher.cabin}`;
+
+    // 🔥 AUTO ROUTE
+    document.getElementById("search").value = teacher.location;
+    showRoute();
+
+  } else {
+    document.getElementById("teacherResult").innerText = "❌ Not Found";
+  }
+}
+
+  // 🔥 IMAGE POPUP
+  function showPopup(el) {
+    document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+    el.querySelector(".popup").style.display = "block";
+  }
+
+  // 🔥 CLOSE POPUP
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest(".point")) {
       document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
-      el.querySelector(".popup").style.display = "block";
     }
+  });
 
-    document.addEventListener("click", function(e) {
-      if (!e.target.closest(".point")) {
-        document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
-      }
-    });
-  </script>
+</script>
 
 </body>
 </html>
