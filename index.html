@@ -313,54 +313,46 @@
 
   </div>
 
-  <script>
-  let currentPosition = [10, 65]; // start at gate
+ <script>
+  let currentPosition = [10, 65];
 
-  // 🔥 LOCATION DATA (SIMPLIFIED KEYS)
   const data = {
     "gate": { location: "🚪 Gate", coords: [10, 65, 10, 65] },
 
     "library": { location: "📚 Library", coords: [10, 65, 20, 60] },
-    "student": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
+    "student center": { location: "🏫 Student Center", coords: [10, 65, 30, 40] },
     "engineering": { location: "🏢 Engineering Block", coords: [10, 65, 55, 70] },
     "science": { location: "🔬 Science Block", coords: [10, 65, 70, 30] },
     "admin": { location: "🏛 Admin Block", coords: [10, 65, 45, 20] }
   };
 
-  // 🔥 TEACHER DATA (CONNECTED TO LOCATION)
   const teachers = {
     "ismail": {
       name: "A.M Ismail",
       cabin: "Block A - Room 101",
       location: "engineering"
-    },
-    "john": {
-      name: "John Sir",
-      cabin: "Block B - Room 202",
-      location: "science"
     }
   };
 
-  // 🔥 MAIN FUNCTION
   function showRoute() {
     let input = document.getElementById("search").value.toLowerCase().trim();
 
     let result = null;
 
-    // ✅ CHECK TEACHER FIRST
+    // 🔥 HANDLE TEACHER
     if (teachers[input]) {
       let teacher = teachers[input];
 
       document.getElementById("result").innerHTML =
         `👨‍🏫 ${teacher.name}<br>📍 ${teacher.cabin}`;
 
-      result = data[teacher.location]; // route to building
+      result = data[teacher.location];
     }
 
-    // ✅ FLEXIBLE LOCATION SEARCH
+    // 🔥 SMART MATCH (FIX FOR YOUR ISSUE)
     else {
       for (let key in data) {
-        if (key.includes(input)) {
+        if (key.includes(input) || input.includes(key)) {
           result = data[key];
           break;
         }
@@ -371,7 +363,7 @@
       }
     }
 
-    // ✅ ROUTE DRAWING
+    // 🔥 DRAW ROUTE
     if (result) {
       let svg = document.getElementById("routeLine");
       svg.innerHTML = "";
@@ -379,17 +371,12 @@
       let [x2, y2] = result.coords.slice(2);
       let [x1, y1] = currentPosition;
 
-      // move user dot
       let dot = document.getElementById("userDot");
       dot.style.left = x2 + "%";
       dot.style.top = y2 + "%";
 
-      // draw route
-      svg.innerHTML = `
-        <line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" />
-      `;
+      svg.innerHTML = `<line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" />`;
 
-      // update position
       currentPosition = [x2, y2];
     }
 
@@ -398,44 +385,36 @@
     }
   }
 
-  // 🔥 QUICK CLICK FROM SIDEBAR
   function quickSearch(place) {
     document.getElementById("search").value = place;
     showRoute();
   }
 
-  // 🔥 FACULTY SEARCH PANEL
   function findTeacher() {
-  let input = document.getElementById("teacherInput").value.toLowerCase().trim();
-  let teacher = teachers[input];
+    let input = document.getElementById("teacherInput").value.toLowerCase().trim();
+    let teacher = teachers[input];
 
-  if (teacher) {
-    // show details
-    document.getElementById("teacherResult").innerHTML =
-      `<b>${teacher.name}</b><br>${teacher.cabin}`;
+    if (teacher) {
+      document.getElementById("teacherResult").innerHTML =
+        `<b>${teacher.name}</b><br>${teacher.cabin}`;
 
-    // 🔥 AUTO ROUTE
-    document.getElementById("search").value = teacher.location;
-    showRoute();
-
-  } else {
-    document.getElementById("teacherResult").innerText = "❌ Not Found";
+      document.getElementById("search").value = teacher.location;
+      showRoute();
+    } else {
+      document.getElementById("teacherResult").innerText = "❌ Not Found";
+    }
   }
-}
 
-  // 🔥 IMAGE POPUP
   function showPopup(el) {
     document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
     el.querySelector(".popup").style.display = "block";
   }
 
-  // 🔥 CLOSE POPUP
   document.addEventListener("click", function(e) {
     if (!e.target.closest(".point")) {
       document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
     }
   });
-
 </script>
 
 </body>
